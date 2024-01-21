@@ -1,4 +1,6 @@
-﻿using EMS.WebAPI.Core.Authentication;
+﻿using EMS.Authentication.API.Data;
+using EMS.WebAPI.Core.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 namespace EMS.Authentication.API.Configuration;
 
@@ -31,5 +33,15 @@ public static class ApiConfig
         });
 
         return app;
+    }
+
+    public static void CheckAndApplyDatabaseMigrations(this IApplicationBuilder app, IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        if (dbContext.Database.GetPendingMigrations().Any())
+        {
+            dbContext.Database.Migrate();
+        }
     }
 }
