@@ -27,8 +27,4 @@
 	  <ProjectReference Include="..\..\building blocks\EMS.WebAPI.Core\EMS.WebAPI.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Configurations\" />
-	</ItemGroup>
-
 </Project>

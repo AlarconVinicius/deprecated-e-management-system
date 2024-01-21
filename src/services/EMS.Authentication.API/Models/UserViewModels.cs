@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NSE.Identidade.API.Models;
+namespace EMS.Authentication.API.Models;
 
 public class UsuarioRegistro
 {

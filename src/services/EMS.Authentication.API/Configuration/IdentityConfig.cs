@@ -1,7 +1,7 @@
-﻿using EMS.WebAPI.Core.Authentication;
+﻿using EMS.Authentication.API.Data;
+using EMS.WebAPI.Core.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using NSE.Identidade.API.Data;
 using NSE.Identidade.API.Extensions;
 
 namespace EMS.Authentication.API.Configuration;
