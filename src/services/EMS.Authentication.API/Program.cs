@@ -1,4 +1,3 @@
-using Api.Configuration;
 using EMS.Authentication.API.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
