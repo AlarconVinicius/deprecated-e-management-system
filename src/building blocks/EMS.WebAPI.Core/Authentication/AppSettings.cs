@@ -2,8 +2,8 @@
 
 public class AppSettings
 {
-    public string? Secret { get; set; }
-    public int ExpiracaoHoras { get; set; }
-    public string? Emissor { get; set; }
-    public string? ValidoEm { get; set; }
+    public required string Secret { get; set; }
+    public required int ExpirationHours { get; set; }
+    public required string Issuer { get; set; }
+    public required string Audience { get; set; }
 }

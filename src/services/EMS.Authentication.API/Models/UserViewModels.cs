@@ -2,53 +2,70 @@
 
 namespace EMS.Authentication.API.Models;
 
-public class UsuarioRegistro
+public class User
 {
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
-    public string? Nome { get; set; }
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
-    public string? Cpf { get; set; }
+    [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres.", MinimumLength = 2)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "O campo {0} é obrigatório")]
+    public string Cpf { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
     [EmailAddress(ErrorMessage = "O campo {0} está em formato inválido")]
-    public string? Email { get; set; }
+    public string Email { get; set; } = string.Empty;
+}
+public class RegisterUser
+{
+    [Required(ErrorMessage = "O campo {0} é obrigatório")]
+    [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres.", MinimumLength = 2)]
+    public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
-    [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 6)]
-    public string? Senha { get; set; }
+    public string Cpf { get; set; } = string.Empty;
 
-    [Compare("Senha", ErrorMessage = "As senhas não conferem.")]
-    public string? SenhaConfirmacao { get; set; }
-}
-
-public class UsuarioLogin
-{
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
     [EmailAddress(ErrorMessage = "O campo {0} está em formato inválido")]
-    public string? Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
     [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 6)]
-    public string? Senha { get; set; }
+    public string Password { get; set; } = string.Empty;
+
+    [Compare("Password", ErrorMessage = "As senhas não conferem.")]
+    public string ConfirmPassword { get; set; } = string.Empty;
 }
 
-public class UsuarioRespostaLogin
+public class LoginUser
 {
-    public string? AccessToken { get; set; }
+    [Required(ErrorMessage = "O campo {0} é obrigatório.")]
+    [EmailAddress(ErrorMessage = "O campo {0} está em formato inválido.")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "O campo {0} é obrigatório.")]
+    [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres.", MinimumLength = 6)]
+    public string Password { get; set; } = string.Empty;
+}
+
+public class UserResponse
+{
+    public string AccessToken { get; set; } = string.Empty;
     public double ExpiresIn { get; set; }
-    public UsuarioToken? UsuarioToken { get; set; }
+    public UserToken UserToken { get; set; } = new UserToken();
 }
 
-public class UsuarioToken
+public class UserToken
 {
-    public string? Id { get; set; }
-    public string? Email { get; set; }
-    public IEnumerable<UsuarioClaim>? Claims { get; set; }
+    public string Id { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public IEnumerable<UserClaim> Claims { get; set; } = new List<UserClaim>();
 }
 
-public class UsuarioClaim
+public class UserClaim
 {
-    public string? Value { get; set; }
-    public string? Type { get; set; }
+    public string Value { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
 }

@@ -1,3 +1,4 @@
+using Api.Configuration;
 using EMS.Authentication.API.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +10,9 @@ builder.Configuration
     .AddEnvironmentVariables();
 builder.Services.AddIdentityConfiguration(builder.Configuration);
 builder.Services.AddApiConfiguration();
+builder.Services.RegisterServices();
 builder.Services.AddSwaggerConfiguration();
-builder.Services.AddMessageBusConfiguration(builder.Configuration);
+//builder.Services.AddMessageBusConfiguration(builder.Configuration);
 
 var app = builder.Build();
 
@@ -18,5 +20,6 @@ app.UseSwaggerConfiguration();
 
 app.UseApiConfiguration(app.Environment);
 
+app.CheckAndApplyDatabaseMigrations(app.Services);
 
 app.Run();
