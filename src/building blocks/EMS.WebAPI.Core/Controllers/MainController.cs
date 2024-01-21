@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using EMS.WebAPI.Core.Services;
+using EMS.WebAPI.Core.Services.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -7,54 +8,52 @@ namespace EMS.WebAPI.Core.Controllers;
 [ApiController]
 public abstract class MainController : Controller
 {
-    protected ICollection<string> Erros = new List<string>();
+    private readonly INotifier _notifier;
 
-    protected ActionResult CustomResponse(object result = null!)
+    protected MainController(INotifier notifier)
     {
-        if (OperacaoValida())
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Mensagens", Erros.ToArray() }
-        }));
+        _notifier = notifier;
     }
 
     protected ActionResult CustomResponse(ModelStateDictionary modelState)
     {
+        if (!modelState.IsValid) NotifyInvalidModelError(modelState);
+        return CustomResponse();
+    }
+
+    protected ActionResult CustomResponse(object result = null!)
+    {
+        if (IsOperationValid())
+        {
+            return Ok(new
+            {
+                success = true,
+                data = result
+            });
+        }
+
+        return BadRequest(new
+        {
+            success = false,
+            errors = _notifier.GetNotifications().Select(n => n.Message)
+        });
+    }
+    protected void NotifyInvalidModelError(ModelStateDictionary modelState)
+    {
         var erros = modelState.Values.SelectMany(e => e.Errors);
         foreach (var erro in erros)
         {
-            AdicionarErroProcessamento(erro.ErrorMessage);
+            var errorMsg = erro.Exception == null ? erro.ErrorMessage : erro.Exception.Message;
+            NotifyError(errorMsg);
         }
-
-        return CustomResponse();
+    }
+    protected void NotifyError(string message)
+    {
+        _notifier.Handle(new Notification(message));
     }
 
-    protected ActionResult CustomResponse(ValidationResult validationResult)
+    protected bool IsOperationValid()
     {
-        foreach (var erro in validationResult.Errors)
-        {
-            AdicionarErroProcessamento(erro.ErrorMessage);
-        }
-
-        return CustomResponse();
-    }
-
-    protected bool OperacaoValida()
-    {
-        return !Erros.Any();
-    }
-
-    protected void AdicionarErroProcessamento(string erro)
-    {
-        Erros.Add(erro);
-    }
-
-    protected void LimparErrosProcessamento()
-    {
-        Erros.Clear();
+        return !_notifier.HasNotification();
     }
 }
