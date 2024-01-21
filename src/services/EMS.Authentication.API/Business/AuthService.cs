@@ -77,9 +77,34 @@ public class AuthService : MainService, IAuthService
         Notify("Usuário ou senha inválidos.");
         return null!;
     }
-    public Task<UserResponse> AddClaimAsync(User user, Claim claim)
+    public async Task<UserResponse> AddClaimAsync(AddUserClaim userClaim)
     {
-        throw new NotImplementedException();
+        IdentityResult result;
+        var userIdentity = await _userManager.FindByEmailAsync(userClaim.Email);
+        var existingClaims = await _userManager.GetClaimsAsync(userIdentity!);
+        var existingClaim = existingClaims.FirstOrDefault(c => c.Type == userClaim.Type);
+
+        if (existingClaim != null)
+        {
+            var updatedClaim = new Claim(userClaim.Type, $"{existingClaim.Value},{userClaim.Value}");
+            result = await _userManager.ReplaceClaimAsync(userIdentity!, existingClaim, updatedClaim);
+        }
+        else
+        {
+            result = await _userManager.AddClaimAsync(userIdentity!, new Claim(userClaim.Type, userClaim.Value));
+        }
+
+        if (result.Succeeded)
+        {
+            return await GenerateJwt(userClaim.Email);
+        }
+
+        foreach (var error in result.Errors)
+        {
+            Notify(error.Description);
+        }
+
+        return null!;
     }
 
     public Task<UserResponse> RemoveClaimAsync(User user, Claim claim)

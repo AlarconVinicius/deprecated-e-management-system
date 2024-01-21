@@ -3,6 +3,7 @@ using EMS.Authentication.API.Models;
 using EMS.WebAPI.Core.Controllers;
 using EMS.WebAPI.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EMS.Authentication.API.Controllers;
 
@@ -31,6 +32,15 @@ public class AuthController : MainController
         if (!ModelState.IsValid) return CustomResponse(ModelState);
 
         var result = await _authService.LoginUserAsync(usuarioLogin);
+        return CustomResponse(result);
+    }
+
+    [HttpPost("claim")]
+    public async Task<ActionResult> AddClaim(AddUserClaim userClaim)
+    {
+        if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+        var result = await _authService.AddClaimAsync(userClaim);
         return CustomResponse(result);
     }
 }
