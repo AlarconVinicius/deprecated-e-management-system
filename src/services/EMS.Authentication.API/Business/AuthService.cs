@@ -4,6 +4,7 @@ using EMS.WebAPI.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,19 +15,27 @@ public class AuthService : MainService, IAuthService
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly AppSettings _appSettings;
     public AuthService(SignInManager<IdentityUser> signInManager,
                        UserManager<IdentityUser> userManager,
+                       RoleManager<IdentityRole> roleManager,
                        IOptions<AppSettings> appSettings,
                        INotifier notifier) : base(notifier)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _roleManager = roleManager;
         _appSettings = appSettings.Value;
     }
 
     public async Task<UserResponse> RegisterUserAsync(RegisterUser registerUser)
     {
+        if (registerUser.Role == ERole.SuperAdmin)
+        {
+            Notify("Role não permitida para registro.");
+            return null!;
+        }
         var user = new IdentityUser
         {
             UserName = registerUser.Email,
@@ -44,9 +53,7 @@ public class AuthService : MainService, IAuthService
             }
             return null!;
         }
-
-        //var userIdentity = await _userManager.FindByEmailAsync(registerUser.Email);
-        //await _userManager.AddToRoleAsync(userIdentity!, RoleEnum.User.ToString());
+        if (!await AddRoleAsync(registerUser)) return null!;
         //await _userManager.AddClaimAsync(userIdentity!, new Claim("Permission", PermissionEnum.Reader.ToString()));
         //await _signInManager.SignInAsync(user, false);
 
@@ -242,4 +249,25 @@ public class AuthService : MainService, IAuthService
     //        throw;
     //    }
     //}
+
+    private async Task<bool> AddRoleAsync(RegisterUser registerUser)
+    {
+        var roleExists = await _roleManager.RoleExistsAsync(registerUser.Role.ToString());
+        var userIdentity = await _userManager.FindByEmailAsync(registerUser.Email);
+        if (!roleExists)
+        {
+            // Se a role não existir, crie-a
+            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(registerUser.Role.ToString()));
+
+            if (!createRoleResult.Succeeded)
+            {
+                Notify($"Erro ao criar a role: {registerUser.Role}");
+                return false;
+            }
+        }
+
+        // Adicionar o usuário à role
+        await _userManager.AddToRoleAsync(userIdentity!, registerUser.Role.ToString());
+        return true;
+    }
 }
