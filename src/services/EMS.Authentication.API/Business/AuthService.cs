@@ -54,9 +54,11 @@ public class AuthService : MainService, IAuthService
             return null!;
         }
         if (!await AddRoleAsync(registerUser)) return null!;
-        //await _userManager.AddClaimAsync(userIdentity!, new Claim("Permission", PermissionEnum.Reader.ToString()));
-        //await _signInManager.SignInAsync(user, false);
-
+        if(registerUser.Role == ERole.Admin)
+        {
+            var addClaim = new AddUserClaim { Email = registerUser.Email, Type = "ClaimControl", Value = "Add,Updade,Delete" };
+            await AddClaimAsync(addClaim);
+        }
         //var clienteResult = await RegisterClient(registerUser);
 
         //if (!clienteResult.ValidationResult.IsValid)
