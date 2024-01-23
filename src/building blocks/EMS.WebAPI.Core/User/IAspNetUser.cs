@@ -6,11 +6,11 @@ namespace EMS.WebAPI.Core.User;
 public interface IAspNetUser
 {
     string Name { get; }
-    Guid ObterUserId();
-    string ObterUserEmail();
-    string ObterUserToken();
-    bool EstaAutenticado();
-    bool PossuiRole(string role);
-    IEnumerable<Claim> ObterClaims();
-    HttpContext ObterHttpContext();
+    Guid GetUserId();
+    string GetUserEmail();
+    string GetUserToken();
+    bool IsAuthenticated();
+    bool HasRole(string role);
+    IEnumerable<Claim> GetClaims();
+    HttpContext GetHttpContext();
 }
