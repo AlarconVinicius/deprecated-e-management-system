@@ -25,18 +25,13 @@ public abstract class MainController : Controller
     {
         if (IsOperationValid())
         {
-            return Ok(new
-            {
-                success = true,
-                data = result
-            });
+            return Ok(result);
         }
 
-        return BadRequest(new
+        return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]>
         {
-            success = false,
-            errors = _notifier.GetNotifications().Select(n => n.Message)
-        });
+            { "Messages", _notifier.GetNotifications().Select(n => n.Message.ToString()).ToArray() }
+        }));
     }
     protected void NotifyInvalidModelError(ModelStateDictionary modelState)
     {

@@ -3,7 +3,6 @@ using EMS.Authentication.API.Models;
 using EMS.WebAPI.Core.Controllers;
 using EMS.WebAPI.Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace EMS.Authentication.API.Controllers;
 
