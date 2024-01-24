@@ -9,6 +9,12 @@ namespace EMS.WebApp.MVC.Controllers
         {
             return View();
         }
+        [Route("plano-detalhe")]
+        public IActionResult PlanDetail()
+        {
+            ViewData["PlanId"] = "0f786487-2213-4810-b996-d2b1e91a3544";
+            return View();
+        }
 
         [Route("sistema-indisponivel")]
         public IActionResult SistemaIndisponivel()

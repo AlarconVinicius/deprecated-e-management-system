@@ -1,4 +1,98 @@
-﻿@{
+﻿@* @using EMS.WebApp.MVC.Extensions
+@model IEnumerable<EMS.WebApp.MVC.Models.ProdutoViewModel> *@
+
+@{
+    ViewData["Title"] = "Todos os produtos";
+}
+
+<section>
+    <div>
+        <div >
+            <div style="text-align: center;">
+                <h1>Planos</h1>
+            </div>
+        </div>
+        <div class="container" style=" padding-top: 20px">
+            <div class="row">
+                @* @{
+                    foreach (var produto in Model.OrderBy(p => p.Nome))
+                { *@
+                    <div class="col-md-4">
+                        <div class="card card-product-grid" style="width: 18rem;">
+                            <div class="card-body text-center">
+                                <a asp-controller="Home" asp-action="PlanoDetalhe" class="title">
+                                    @* asp-route-id="@plano.Id" *@
+                                    <h5 class="card-title">Serviço 1</h5>
+                                </a>
+                                <p class="card-text">Ideal para profissionais liberais.</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="">
+                                    <p class="">=> Item 1</p>
+                                    <p class="">=> Item 2</p>
+                                    <p class="">=> Item 3</p>
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <a asp-controller="Home" asp-action="PlanoDetalhe" class="btn btn-sm btn-dark">
+                                    Quero esse!
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <div class="col-md-4">
+                    <div class="card card-product-grid" style="width: 18rem;">
+                        <div class="card-body text-center">
+                            <a asp-controller="Home" asp-action="PlanoDetalhe" class="title">
+                                @* asp-route-id="@plano.Id" *@
+                                <h5 class="card-title">Serviço 2</h5>
+                            </a>
+                            <p class="card-text">Ideal para profissionais liberais.</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="">
+                                <p class="">=> Item 1</p>
+                                <p class="">=> Item 2</p>
+                                <p class="">=> Item 3</p>
+                            </div>
+                        </div>
+                        <div class="card-body text-center">
+                            <a asp-controller="Home" asp-action="PlanoDetalhe" class="btn btn-sm btn-dark">
+                                Quero esse!
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-product-grid" style="width: 18rem;">
+                        <div class="card-body text-center">
+                            <a asp-controller="Home" asp-action="PlanoDetalhe" class="title">
+                                @* asp-route-id="@plano.Id" *@
+                                <h5 class="card-title">Serviço 3</h5>
+                            </a>
+                            <p class="card-text">Ideal para profissionais liberais.</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="">
+                                <p class="">=> Item 1</p>
+                                <p class="">=> Item 2</p>
+                                <p class="">=> Item 3</p>
+                            </div>
+                        </div>
+                        <div class="card-body text-center">
+                            <a asp-controller="Home" asp-action="PlanoDetalhe" class="btn btn-sm btn-dark">
+                                Quero esse!
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                    @* }
+                } *@
+            </div>
+        </div>
+    </div>
+</section>
+@* @{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +100,4 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+ *@
