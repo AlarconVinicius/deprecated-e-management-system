@@ -15,9 +15,9 @@ public class RegisterUser
     [DisplayName("Nome")]
     public string Name { get; set; } = string.Empty;
 
+    [Cpf]
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
     [DisplayName("CPF")]
-    [Cpf]
     public string Cpf { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O campo {0} é obrigatório")]
@@ -30,6 +30,7 @@ public class RegisterUser
     [DisplayName("Senha")]
     public string Password { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "O campo {0} é obrigatório")]
     [Compare("Password", ErrorMessage = "As senhas não conferem.")]
     [DisplayName("Confirme sua senha")]
     public string ConfirmPassword { get; set; } = string.Empty;
