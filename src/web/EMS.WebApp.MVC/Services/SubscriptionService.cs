@@ -1,6 +1,5 @@
 ﻿using EMS.WebApp.MVC.Extensions;
 using EMS.WebApp.MVC.Models;
-using EMS.WebApp.MVC.Services;
 using Microsoft.Extensions.Options;
 
 namespace EMS.WebApp.MVC.Services;
