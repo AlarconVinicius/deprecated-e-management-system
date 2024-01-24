@@ -15,6 +15,7 @@ public static class DependencyInjectionConfig
         services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
         services.AddHttpClient<IAuthService, AuthService>();
+        services.AddHttpClient<ISubscriptionService, SubscriptionService>();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IAspNetUser, AspNetUser>();
