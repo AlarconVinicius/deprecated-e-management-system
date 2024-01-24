@@ -24,7 +24,7 @@ public class HomeController : Controller
         var plan = await _subscriptionService.GetById(id);
         var registerUser = new RegisterUser();
 
-        var viewModel = new PlanDetailViewModel
+        var viewModel = new PlanUserViewModel
         {
             Plan = plan,
             RegisterUser = registerUser
