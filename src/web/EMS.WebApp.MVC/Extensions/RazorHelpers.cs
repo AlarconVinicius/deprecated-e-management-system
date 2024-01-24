@@ -17,14 +17,18 @@ public static class RazorHelpers
         }
         return sBuilder.ToString();
     }
-
-    public static string FormatoMoeda(this RazorPage page, double valor)
+    public static string FormatCurrency(this RazorPage page, double value)
     {
-        return valor > 0 ? string.Format(Thread.CurrentThread.CurrentCulture, "{0:C}", valor) : "Gratuito";
+        return value > 0 ? string.Format(Thread.CurrentThread.CurrentCulture, "{0:C}", value) : "Gratuito";
     }
 
-    public static string MensagemEstoque(this RazorPage page, int quantidade)
+    public static string StockMessage(this RazorPage page, int quantity)
     {
-        return quantidade > 0 ? $"Apenas {quantidade} em estoque!" : "Produto esgotado!";
+        return quantity > 0 ? $"Apenas {quantity} em estoque!" : "Produto esgotado!";
+    }
+
+    public static IEnumerable<string> SplitBenefits(this RazorPage page, string benefits)
+    {
+        return benefits.Split(',').ToList();
     }
 }
