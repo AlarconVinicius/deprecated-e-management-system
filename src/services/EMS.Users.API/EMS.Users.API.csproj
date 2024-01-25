@@ -25,11 +25,11 @@
 
 	<ItemGroup>
 		<Folder Include="Controllers\" />
-		<Folder Include="Data\Repository\" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\building blocks\EMS.Core\EMS.Core.csproj" />
+		<ProjectReference Include="..\..\building blocks\EMS.MessageBus\EMS.MessageBus.csproj" />
 		<ProjectReference Include="..\..\building blocks\EMS.WebAPI.Core\EMS.WebAPI.Core.csproj" />
 	</ItemGroup>
 

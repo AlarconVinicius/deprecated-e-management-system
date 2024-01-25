@@ -6,11 +6,13 @@ namespace EMS.WebAPI.Core.Services;
 
 public class MainService
 {
-    private readonly INotifier _notifier;
+    private readonly INotifier _notifier; 
+    protected ValidationResult _validationResult;
 
     protected MainService(INotifier notifier)
     {
         _notifier = notifier;
+        _validationResult = new ValidationResult();
     }
 
     protected void Notify(ValidationResult validationResult)
@@ -24,6 +26,7 @@ public class MainService
     protected void Notify(string message)
     {
         _notifier.Handle(new Notification(message));
+        _validationResult.Errors.Add(new ValidationFailure(string.Empty, message));
     }
 
     protected bool ExecuteValidation<TV, TE>(TV validation, TE entity) where TV : AbstractValidator<TE>
