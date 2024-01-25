@@ -1,10 +1,8 @@
 ﻿using EMS.Core.Data;
-using EMS.Users.API.Data;
-using EMS.Users.API.Data.Repository;
 using EMS.Users.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EMS.Clientes.API.Data.Repository;
+namespace EMS.Users.API.Data.Repository;
 
 public class UserRepository : IUserRepository
 {

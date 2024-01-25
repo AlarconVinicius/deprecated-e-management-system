@@ -39,6 +39,7 @@
                             <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
 
                                 <input type="hidden" asp-for="@Model.RegisterUser.PlanId" value="@Model.Plan.Id" />
+                                <input type="hidden" asp-for="@Model.RegisterUser.Role" value="@ERole.Admin" />
                                 <div class="form-group">
                                     <label asp-for="@Model.RegisterUser.Name"></label>
                                     <input asp-for="@Model.RegisterUser.Name" class="form-control" />
