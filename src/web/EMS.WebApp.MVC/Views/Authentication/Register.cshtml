@@ -18,7 +18,7 @@
                             <div class="">
                                 @foreach (var benefit in this.SplitBenefits(@Model.Plan.Benefits))
                                 {
-                                    <p class="font-weight-bold">@benefit</p>
+                                    <p class="font-weight-bold"><i class="far fa-check-circle" style="color: #f06f11;"></i> @benefit</p>
                                 }
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+                                    <button type="submit" class="btn btn-block btn-auth">Registrar</button>
                                 </div>
                             </form>
                         </div>
