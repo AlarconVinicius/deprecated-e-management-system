@@ -177,7 +177,6 @@ public class AuthService : MainService, IAuthService
         var userIdentity = await _userManager.FindByEmailAsync(registerUser.Email);
         if (!roleExists)
         {
-            // Se a role não existir, crie-a
             var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(registerUser.Role.ToString()));
 
             if (!createRoleResult.Succeeded)
@@ -187,7 +186,6 @@ public class AuthService : MainService, IAuthService
             }
         }
 
-        // Adicionar o usuário à role
         await _userManager.AddToRoleAsync(userIdentity!, registerUser.Role.ToString());
         return true;
     }
