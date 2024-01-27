@@ -11,6 +11,7 @@ public class RegisteredUserIntegrationEvent : IntegrationEvent
 
     public RegisteredUserIntegrationEvent(Guid id, Guid planId, string name, string email, string cpf, bool isActive)
     {
+        AggregateId = id;
         Id = id;
         PlanId = planId;
         Name = name;

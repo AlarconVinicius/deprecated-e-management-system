@@ -69,6 +69,7 @@ public class AuthService : MainService, IAuthService
 
         if (!clientResult.ValidationResult.IsValid || !clientPlanResult.ValidationResult.IsValid)
         {
+            await DeleteClient(registerUser);
             await _userManager.DeleteAsync(user);
             Notify(clientResult.ValidationResult);
             Notify(clientPlanResult.ValidationResult);
@@ -292,7 +293,23 @@ public class AuthService : MainService, IAuthService
         }
         catch
         {
+            await DeleteClient(registerUser);
             await _userManager.DeleteAsync(userDb);
+            throw;
+        }
+    }
+    private async Task<ResponseMessage> DeleteClient(RegisterUser registerUser)
+    {
+        var userDb = await _userManager.FindByEmailAsync(registerUser.Email);
+
+        var deleteClientPlanEvent = new DeletedUserIntegrationEvent(registerUser.Cpf);
+
+        try
+        {
+            return await _bus.RequestAsync<DeletedUserIntegrationEvent, ResponseMessage>(deleteClientPlanEvent);
+        }
+        catch
+        {
             throw;
         }
     }

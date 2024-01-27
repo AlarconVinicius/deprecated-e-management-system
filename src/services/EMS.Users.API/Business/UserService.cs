@@ -35,6 +35,24 @@ public class UserService : MainService, IUserService
         return _validationResult;
     }
 
+    public async Task<ValidationResult> DeleteUser(string cpf)
+    {
+        var userDb = await _userRepository.GetByCpf(cpf);
+        if (userDb is null)
+        {
+            Notify("Usuário não encontrado");
+            return _validationResult;
+        }
+        _userRepository.DeleteUser(userDb);
+
+        if (!await _userRepository.UnitOfWork.Commit())
+        {
+            Notify("Houve um erro ao persistir os dados");
+            return _validationResult;
+        };
+        return _validationResult;
+    }
+
     public Task<IEnumerable<User>> GetAllUsers()
     {
         throw new NotImplementedException();

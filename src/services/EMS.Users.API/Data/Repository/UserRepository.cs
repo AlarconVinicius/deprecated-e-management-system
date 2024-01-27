@@ -30,6 +30,11 @@ public class UserRepository : IUserRepository
         _context.Users.Add(user);
     }
 
+    public void DeleteUser(User user)
+    {
+        _context.Users.Remove(user);
+    }
+
     public void Dispose()
     {
         _context.Dispose();

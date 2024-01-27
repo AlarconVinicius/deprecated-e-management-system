@@ -10,6 +10,7 @@ public static class MessageBusConfig
         IConfiguration configuration)
     {
         services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus"))
-            .AddHostedService<UserRegistrationIntegrationHandler>();
+                .AddHostedService<UserRegistrationIntegrationHandler>()
+                .AddHostedService<UserDeletionIntegrationHandler>();
     }
 }
