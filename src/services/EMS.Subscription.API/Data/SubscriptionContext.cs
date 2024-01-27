@@ -1,10 +1,11 @@
-﻿using EMS.Subscription.API.Model;
+﻿using EMS.Core.Data;
+using EMS.Subscription.API.Model;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace EMS.Subscription.API.Data;
 
-public class SubscriptionContext : DbContext
+public class SubscriptionContext : DbContext, IUnitOfWork
 {
     public SubscriptionContext(DbContextOptions<SubscriptionContext> options)
             : base(options)
@@ -34,8 +35,7 @@ public class SubscriptionContext : DbContext
 
     public async Task<bool> Commit()
     {
-        var sucesso = await base.SaveChangesAsync() > 0;
-        //if (sucesso) await _meditorHHandler.PublicarEventos(this);
-        return sucesso;
+        var success = await base.SaveChangesAsync() > 0;
+        return success;
     }
 }
