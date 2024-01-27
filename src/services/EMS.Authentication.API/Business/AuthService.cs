@@ -64,12 +64,14 @@ public class AuthService : MainService, IAuthService
             var addClaim = new AddUserClaim { Email = registerUser.Email, Type = "ClaimControl", Value = "Add,Updade,Delete" };
             await AddClaimAsync(addClaim);
         }
-        var clienteResult = await RegisterClient(registerUser);
+        var clientResult = await RegisterClient(registerUser);
+        var clientPlanResult = await RegisterClientPlan(registerUser);
 
-        if (!clienteResult.ValidationResult.IsValid)
+        if (!clientResult.ValidationResult.IsValid || !clientPlanResult.ValidationResult.IsValid)
         {
             await _userManager.DeleteAsync(user);
-            Notify(clienteResult.ValidationResult);
+            Notify(clientResult.ValidationResult);
+            Notify(clientPlanResult.ValidationResult);
             return null!;
         }
 
@@ -270,6 +272,23 @@ public class AuthService : MainService, IAuthService
         try
         {
             return await _bus.RequestAsync<RegisteredIdentityIntegrationEvent, ResponseMessage>(registerUserEvent);
+        }
+        catch
+        {
+            await _userManager.DeleteAsync(userDb);
+            throw;
+        }
+    }
+
+    private async Task<ResponseMessage> RegisterClientPlan(RegisterUser registerUser)
+    {
+        var userDb = await _userManager.FindByEmailAsync(registerUser.Email);
+
+        var registerClientPlanEvent = new RegisteredUserIntegrationEvent(Guid.Parse(userDb!.Id), registerUser.PlanId, registerUser.Name, registerUser.Email, registerUser.Cpf, true);
+
+        try
+        {
+            return await _bus.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registerClientPlanEvent);
         }
         catch
         {
