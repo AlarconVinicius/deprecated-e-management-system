@@ -300,7 +300,7 @@ public class AuthService : MainService, IAuthService
     {
         var userDb = await _userManager.FindByEmailAsync(registerUser.Email);
 
-        var deleteClientPlanEvent = new DeletedUserIntegrationEvent(registerUser.Cpf);
+        var deleteClientPlanEvent = new DeletedUserIntegrationEvent(Guid.Parse(userDb.Id));
 
         try
         {

@@ -2,10 +2,11 @@
 
 public class DeletedUserIntegrationEvent : IntegrationEvent
 {
-    public string Cpf { get; private set; }
+    public Guid Id { get; private set; }
 
-    public DeletedUserIntegrationEvent(string cpf)
+    public DeletedUserIntegrationEvent(Guid id)
     {
-        Cpf = cpf;
+        AggregateId = id;
+        Id = id;
     }
 }

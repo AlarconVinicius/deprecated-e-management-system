@@ -35,9 +35,9 @@ public class UserService : MainService, IUserService
         return _validationResult;
     }
 
-    public async Task<ValidationResult> DeleteUser(string cpf)
+    public async Task<ValidationResult> DeleteUser(Guid id)
     {
-        var userDb = await _userRepository.GetByCpf(cpf);
+        var userDb = await _userRepository.GetById(id);
         if (userDb is null)
         {
             Notify("Usuário não encontrado");

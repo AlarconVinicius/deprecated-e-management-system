@@ -44,7 +44,7 @@ public class UserDeletionIntegrationHandler : BackgroundService
         using (var scope = _serviceProvider.CreateScope())
         {
             var service = scope.ServiceProvider.GetRequiredService<IUserService>();
-            success = await service.DeleteUser(message.Cpf);
+            success = await service.DeleteUser(message.Id);
         }
 
         return new ResponseMessage(success);

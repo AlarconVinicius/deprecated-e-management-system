@@ -20,6 +20,11 @@ public class UserRepository : IUserRepository
         return await _context.Users.AsNoTracking().ToListAsync();
     }
 
+    public Task<User> GetById(Guid id)
+    {
+        return _context.Users.FirstOrDefaultAsync(c => c.Id == id)!;
+    }
+
     public Task<User> GetByCpf(string cpf)
     {
         return _context.Users.FirstOrDefaultAsync(c => c.Cpf.Number == cpf)!;
