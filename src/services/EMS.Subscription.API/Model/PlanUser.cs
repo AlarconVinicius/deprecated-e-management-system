@@ -9,7 +9,7 @@ public class PlanUser : Entity, IAggregateRoot
     public Guid ClientId { get; set; }
     public string UserName { get; set; } = string.Empty;
     public string UserEmail { get; set; } = string.Empty;
-    public string UserCpf { get; set; } = string.Empty;
+    public string UserCpf { get; set; } = string.Empty;  
     public bool IsActive { get; set; }
 
     [JsonIgnore]
@@ -17,9 +17,13 @@ public class PlanUser : Entity, IAggregateRoot
 
     public PlanUser() { }
 
-    public PlanUser(Guid planId, Guid clientId)
+    public PlanUser(Guid planId, Guid clientId, string username, string userEmail, string userCpf, bool isActive)
     {
         PlanId = planId;
         ClientId = clientId;
+        UserName = username;
+        UserEmail = userEmail;
+        UserCpf = userCpf;
+        IsActive = isActive;
     }
 }
