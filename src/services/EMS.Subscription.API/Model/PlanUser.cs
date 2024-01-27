@@ -13,7 +13,7 @@ public class PlanUser : Entity, IAggregateRoot
     public bool IsActive { get; set; }
 
     [JsonIgnore]
-    public Plan Plan { get; set; } = new Plan();
+    public Plan? Plan { get; set; }
 
     public PlanUser() { }
 
