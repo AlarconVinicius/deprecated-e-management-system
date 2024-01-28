@@ -1,4 +1,5 @@
-﻿using EMS.WebApp.MVC.Models;
+﻿using EMS.WebAPI.Core.User;
+using EMS.WebApp.MVC.Models;
 using EMS.WebApp.MVC.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -12,17 +13,19 @@ public class AuthenticationController : MainController
 {
     private readonly IAuthService _authService;
     private readonly ISubscriptionService _subscriptionService;
-
-    public AuthenticationController(IAuthService authService, ISubscriptionService subscriptionService)
+    private readonly IAspNetUser _appUser;
+    public AuthenticationController(IAuthService authService, ISubscriptionService subscriptionService, IAspNetUser appUser)
     {
         _authService = authService;
         _subscriptionService = subscriptionService;
+        _appUser = appUser;
     }
 
     [HttpGet]
     [Route("nova-conta/{id}")]
     public async Task<IActionResult> Register(Guid id)
     {
+        if(_appUser.IsAuthenticated()) return RedirectToAction("Index", "Home");
         var plan = await _subscriptionService.GetById(id);
         var registerUser = new RegisterUser();
 
@@ -69,6 +72,7 @@ public class AuthenticationController : MainController
     [Route("login")]
     public async Task<IActionResult> Login(LoginUser loginUser, string returnUrl = null!)
     {
+        if (_appUser.IsAuthenticated()) return RedirectToAction("Index", "Home");
         ViewData["ReturnUrl"] = returnUrl;
         if (!ModelState.IsValid) return View(loginUser);
 
