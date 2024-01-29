@@ -12,9 +12,16 @@ INCLUDE STYLES AND COMPONENTS
 ===================== */
 
 /* ================== HELPERS  =================== */
-
-a:hover { text-decoration: none; }
-
+a {color: #f06f11;}
+a:hover { text-decoration: none; color:  #d75a00;}
+.btn-auth {
+    color: #fff;
+    background: #f06f11;
+}
+.btn-auth:hover {
+    color: #fff;
+    background: #f06e11af;
+}
 .img-wrap {
     text-align: center;
     display: block;
@@ -417,7 +424,7 @@ p:last-child { margin-bottom: 0; }
 
 .widget-header a { color: #343a40; }
 
-.widget-header a:hover { color: #3167eb; }
+.widget-header a:hover { color: #f06f11; }
 
 .widget-header i { color: #969696; }
 
@@ -443,7 +450,7 @@ p:last-child { margin-bottom: 0; }
 
 .section-footer ul a { color: inherit; }
 
-.section-footer ul a:hover { color: #3167eb; }
+.section-footer ul a:hover { color: #f06f11; }
 
 .section-footer .logo-footer { height: 40px; }
 
@@ -597,7 +604,7 @@ p:last-child { margin-bottom: 0; }
     color: #212529;
 }
 
-.itemside a.title:hover { color: #3167eb; }
+.itemside a.title:hover { color: #f06f11; }
 
 a.itemside { color: initial; }
 
@@ -758,7 +765,7 @@ ul.row, ul.row-sm {
 
 .list-menu a { color: #343a40; }
 
-.list-menu a:hover { color: #3167eb; }
+.list-menu a:hover { color: #f06f11; }
 
 .cols-two {
     -webkit-column-count: 2;
@@ -779,7 +786,7 @@ ul.row, ul.row-sm {
 
 a[class*='card'] { color: initial; }
 
-a[class*='card']:hover .title { color: #3167eb; }
+a[class*='card']:hover .title { color: #f06f11; }
 
 /* BASE STYLE FOR PRODUCT ITEM */
 
@@ -788,7 +795,7 @@ a[class*='card']:hover .title { color: #3167eb; }
     display: block;
 }
 
-[class*='card-product'] a.title:hover { color: #3167eb; }
+[class*='card-product'] a.title:hover { color: #f06f11; }
 
 [class*='card-product'] .badge {
     top: 10px;
@@ -843,7 +850,7 @@ a[class*='card']:hover .title { color: #3167eb; }
 
 .card-product-grid .topbar a { color: #ccc; }
 
-.card-product-grid .topbar a:hover { color: #3167eb; }
+.card-product-grid .topbar a:hover { color: #f06f11; }
 
 .card-product-grid .fix-height {
     height: 80px;

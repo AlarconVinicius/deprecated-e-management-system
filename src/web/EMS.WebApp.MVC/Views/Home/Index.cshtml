@@ -18,17 +18,18 @@
                     foreach (var plan in Model.OrderBy(p => p.Price))
                     {
                         <div class="col-md-4">
-                            <div class="card card-product-grid" style="width: 20rem; min-height: 500px">
+                            <div class="card card-product-grid" style="min-height: 500px">
                                 <div class="card-body text-center">
                                     <a asp-controller="Home" asp-action="PlanDetail" asp-route-id="@plan.Id" class="title">
                                         <h5 class="card-title">@plan.Title</h5>
                                     </a>
                                     <p class="card-text">@plan.SubTitle</p>
+                                    <hr />
                                 </div>
                                 <div class="card-body">
                                     @foreach (var benefit in this.SplitBenefits(@plan.Benefits))
                                     {
-                                        <p class="font-weight-bold">@benefit</p>
+                                        <p class="font-weight-bold px-4"><i class="far fa-check-circle" style="color: #f06f11;"></i> @benefit</p>
                                     }
                                 </div>
                                 <div class="card-body mb-2 text-center">

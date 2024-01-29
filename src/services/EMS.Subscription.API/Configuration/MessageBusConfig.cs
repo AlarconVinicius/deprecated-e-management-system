@@ -1,10 +1,15 @@
-﻿namespace EMS.Authentication.API.Configuration;
+﻿using EMS.Core.Utils;
+using EMS.MessageBus;
+using EMS.Subscription.API.Services;
+
+namespace EMS.Subscription.API.Configuration;
 
 public static class MessageBusConfig
 {
     public static void AddMessageBusConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
-        //services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus")); ;
+        services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus"))
+            .AddHostedService<ClientPlanRegistrationIntegrationHandler>();
     }
 }

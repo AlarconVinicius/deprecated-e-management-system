@@ -10,7 +10,7 @@ builder.Configuration
 builder.Services.AddApiConfiguration(builder.Configuration);
 builder.Services.RegisterServices();
 builder.Services.AddSwaggerConfiguration();
-//builder.Services.AddMessageBusConfiguration(builder.Configuration);
+builder.Services.AddMessageBusConfiguration(builder.Configuration);
 
 var app = builder.Build();
 

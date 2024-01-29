@@ -1,0 +1,92 @@
+﻿@using EMS.WebAPI.Core.User;
+@using EMS.WebApp.MVC.Extensions;
+@inject IAspNetUser AppUser
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Colaboradores";
+}
+
+<div class="mb-3">
+    <h4>Colaboradores</h4>
+</div>
+<div class="card border-0 col-md-12">
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">
+            Colaboradores
+        </h5>
+        <div class="d-flex align-items-center">
+            <div class="input-group me-3">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Pesquisar"
+                       aria-label="Pesquisar"
+                       aria-describedby="pesquisar" />
+                <button class="btn btn-outline-secondary"
+                        type="button"
+                        id="pesquisar">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            <a class="btn btn-success align-self-center w-75">
+                Adicionar Colaborador
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Imagem</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Salário</th>
+                    <th scope="col">Comissão</th>
+                    <th scope="col">Telefone</th>
+                    <th scope="col">Especialidade</th>
+                    <th scope="col">Posição</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Imagem ABC</td>
+                    <td>Vinícius</td>
+                    <td>vinicius@email.com</td>
+                    <td>R$ 2000,00</td>
+                    <td>R$ 5,00</td>
+                    <td>21999999999</td>
+                    <td>Espec 001, Espec 002</td>
+                    <td>Atendente</td>
+                    <td>Desativado</td>
+                    <td>
+                        <a href="#" class="btn btn-info me-3"><span class="fa fa-unlock"></span></a>
+                        <a href="#" class="btn btn-warning me-3"><span class="fa fa-eye"></span></a>
+                        <a href="#" class="btn btn-warning me-3"><span class="fa fa-pencil-alt"></span></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalDeleteRecipe" class="btn btn-danger"><span class="fa fa-trash"></span></a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Imagem XYZ</td>
+                    <td>Bruno</td>
+                    <td>bruno@email.com</td>
+                    <td>R$ 2600,00</td>
+                    <td>R$ 13,00</td>
+                    <td>21999999999</td>
+                    <td>Espec 003, Espec 004</td>
+                    <td>Agendamentos</td>
+                    <td>Ativo</td>
+                    <td>
+                        <a href="#" class="btn btn-info me-3"><span class="fa fa-lock"></span></a>
+                        <a href="#" class="btn btn-warning me-3"><span class="fa fa-eye"></span></a>
+                        <a href="#" class="btn btn-warning me-3"><span class="fa fa-pencil-alt"></span></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#ModalDeleteRecipe" class="btn btn-danger"><span class="fa fa-trash"></span></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

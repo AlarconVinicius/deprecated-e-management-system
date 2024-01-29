@@ -1,0 +1,97 @@
+﻿@using EMS.WebAPI.Core.User;
+@using EMS.WebApp.MVC.Extensions;
+@inject IAspNetUser AppUser
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="mb-3">
+    <h4>Admin Dashboard</h4>
+</div>
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                <img class="rounded-circle" src="https://s.gravatar.com/avatar/@this.HashEmailForGravatar(AppUser.GetUserEmail())?d=mm&s=45" alt="Profile">
+                <h2>Alarcon</h2>
+                <h3>Vinícius</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-body pt-3">
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item"> <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Visão Geral</button></li>
+                    <li class="nav-item"> <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Editar Perfil</button></li>
+                    <li class="nav-item"> <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Alterar Senha</button></li>
+                </ul>
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                        <h5 class="card-title">Detalhes do Perfil</h5>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4 label ">Nome Completo</div>
+                            <div class="col-lg-9 col-md-8">Vinícius Alarcon</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4 label">Telefone</div>
+                            <div class="col-lg-9 col-md-8">21979596694</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4 label">Email</div>
+                            <div class="col-lg-9 col-md-8">@AppUser.GetUserEmail()</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                        <form enctype="multipart/form-data">
+                            <div class="row mb-3">
+                                <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Imagem de Perfil</label>
+                                <div class="col-md-8 col-lg-9">
+                                    <img src="https://s.gravatar.com/avatar/@this.HashEmailForGravatar(AppUser.GetUserEmail())?d=mm&s=45" alt="Profile" class="d-block mb-2">
+                                    <input type="file" id="fileInput" class="btn btn-primary btn-sm" style="display: none;">
+                                    <label for="fileInput" class="btn btn-primary btn-sm me-3" title="Upload new profile image"><i class="bi bi-upload"></i></label>
+                                    <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="name" class="col-md-4 col-lg-3 col-form-label">Nome</label>
+                                <div class="col-md-8 col-lg-9"> <input name="name" type="text" class="form-control" id="name"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="cpf" class="col-md-4 col-lg-3 col-form-label">CPF</label>
+                                <div class="col-md-8 col-lg-9"> <input name="cpf" type="text" class="form-control" id="cpf" disabled></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="phoneNumber" class="col-md-4 col-lg-3 col-form-label">Telefone</label>
+                                <div class="col-md-8 col-lg-9"> <input name="phoneNumber" type="text" class="form-control" id="phoneNumber"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                                <div class="col-md-8 col-lg-9"> <input name="email" type="email" class="form-control" id="email"></div>
+                            </div>
+                            <div class="text-center"> <button type="submit" class="btn btn-primary" >Salvar</button></div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade pt-3" id="profile-change-password">
+                        <form>
+                            <div class="row mb-3">
+                                <label for="oldPassword" class="col-md-4 col-lg-3 col-form-label">Senha Atual</label>
+                                <div class="col-md-8 col-lg-9"> <input name="oldPassword" type="password" class="form-control" id="oldPassword"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nova Senha</label>
+                                <div class="col-md-8 col-lg-9"> <input name="newPassword" type="password" class="form-control" id="newPassword"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="confirmPassword" class="col-md-4 col-lg-3 col-form-label">Confirmar Nova Senha</label>
+                                <div class="col-md-8 col-lg-9"> <input name="confirmPassword" type="password" class="form-control" id="confirmPassword"></div>
+                            </div>
+                            <div class="text-center"> <button type="submit" class="btn btn-primary" (click)="putChangeUserPassword()">Alterar Senha</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

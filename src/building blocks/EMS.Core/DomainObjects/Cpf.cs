@@ -40,7 +40,7 @@ public class Cpf
 
         var sum = 0;
         for (var i = 0; i < MaxCpfLength - 2; i++)
-            sum += (MaxCpfLength - i) * numbers[i];
+            sum += ((MaxCpfLength - 1) - i) * numbers[i];
 
         var result = sum % 11;
 

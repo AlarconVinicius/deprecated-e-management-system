@@ -1,4 +1,6 @@
 ﻿using EMS.Authentication.API.Models;
+using EMS.Core.Messages.Integration;
+using EMS.MessageBus;
 using EMS.WebAPI.Core.Authentication;
 using EMS.WebAPI.Core.Services;
 using Microsoft.AspNetCore.Identity;
@@ -17,16 +19,19 @@ public class AuthService : MainService, IAuthService
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly AppSettings _appSettings;
+    private readonly IMessageBus _bus;
     public AuthService(SignInManager<IdentityUser> signInManager,
                        UserManager<IdentityUser> userManager,
                        RoleManager<IdentityRole> roleManager,
                        IOptions<AppSettings> appSettings,
+                       IMessageBus bus,
                        INotifier notifier) : base(notifier)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _roleManager = roleManager;
         _appSettings = appSettings.Value;
+        _bus = bus;
     }
 
     public async Task<UserResponse> RegisterUserAsync(RegisterUser registerUser)
@@ -59,13 +64,17 @@ public class AuthService : MainService, IAuthService
             var addClaim = new AddUserClaim { Email = registerUser.Email, Type = "ClaimControl", Value = "Add,Updade,Delete" };
             await AddClaimAsync(addClaim);
         }
-        //var clienteResult = await RegisterClient(registerUser);
+        var clientResult = await RegisterClient(registerUser);
+        var clientPlanResult = await RegisterClientPlan(registerUser);
 
-        //if (!clienteResult.ValidationResult.IsValid)
-        //{
-        //    await _userManager.DeleteAsync(user);
-        //    return CustomResponse(clienteResult.ValidationResult);
-        //}
+        if (!clientResult.ValidationResult.IsValid || !clientPlanResult.ValidationResult.IsValid)
+        {
+            await DeleteClient(registerUser);
+            await _userManager.DeleteAsync(user);
+            Notify(clientResult.ValidationResult);
+            Notify(clientPlanResult.ValidationResult);
+            return null!;
+        }
 
         return await GenerateJwt(registerUser.Email);
     }
@@ -161,6 +170,25 @@ public class AuthService : MainService, IAuthService
         throw new NotImplementedException();
     }
 
+    #region Identity
+    private async Task<bool> AddRoleAsync(RegisterUser registerUser)
+    {
+        var roleExists = await _roleManager.RoleExistsAsync(registerUser.Role.ToString());
+        var userIdentity = await _userManager.FindByEmailAsync(registerUser.Email);
+        if (!roleExists)
+        {
+            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(registerUser.Role.ToString()));
+
+            if (!createRoleResult.Succeeded)
+            {
+                Notify($"Erro ao criar a role: {registerUser.Role}");
+                return false;
+            }
+        }
+
+        await _userManager.AddToRoleAsync(userIdentity!, registerUser.Role.ToString());
+        return true;
+    }
     private async Task<UserResponse> GenerateJwt(string email)
     {
         var userDb = await _userManager.FindByEmailAsync(email);
@@ -233,43 +261,55 @@ public class AuthService : MainService, IAuthService
 
     private static long ToUnixEpochDate(DateTime date)
         => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
-
-    //private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
-    //{
-    //    var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
-
-    //    var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
-    //        Guid.Parse(usuario!.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
-
-    //    try
-    //    {
-    //        return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
-    //    }
-    //    catch
-    //    {
-    //        await _userManager.DeleteAsync(usuario);
-    //        throw;
-    //    }
-    //}
-
-    private async Task<bool> AddRoleAsync(RegisterUser registerUser)
+    #endregion
+    private async Task<ResponseMessage> RegisterClient(RegisterUser registerUser)
     {
-        var roleExists = await _roleManager.RoleExistsAsync(registerUser.Role.ToString());
-        var userIdentity = await _userManager.FindByEmailAsync(registerUser.Email);
-        if (!roleExists)
+        var userDb = await _userManager.FindByEmailAsync(registerUser.Email);
+
+        var registerUserEvent = new RegisteredIdentityIntegrationEvent(Guid.Parse(userDb!.Id), registerUser.Name, registerUser.Email, registerUser.Cpf);
+
+        try
         {
-            // Se a role não existir, crie-a
-            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(registerUser.Role.ToString()));
-
-            if (!createRoleResult.Succeeded)
-            {
-                Notify($"Erro ao criar a role: {registerUser.Role}");
-                return false;
-            }
+            return await _bus.RequestAsync<RegisteredIdentityIntegrationEvent, ResponseMessage>(registerUserEvent);
         }
-
-        // Adicionar o usuário à role
-        await _userManager.AddToRoleAsync(userIdentity!, registerUser.Role.ToString());
-        return true;
+        catch
+        {
+            await _userManager.DeleteAsync(userDb);
+            throw;
+        }
     }
+
+    private async Task<ResponseMessage> RegisterClientPlan(RegisterUser registerUser)
+    {
+        var userDb = await _userManager.FindByEmailAsync(registerUser.Email);
+
+        var registerClientPlanEvent = new RegisteredUserIntegrationEvent(Guid.Parse(userDb!.Id), registerUser.PlanId, registerUser.Name, registerUser.Email, registerUser.Cpf, true);
+
+        try
+        {
+            return await _bus.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registerClientPlanEvent);
+        }
+        catch
+        {
+            await DeleteClient(registerUser);
+            await _userManager.DeleteAsync(userDb);
+            throw;
+        }
+    }
+    private async Task<ResponseMessage> DeleteClient(RegisterUser registerUser)
+    {
+        var userDb = await _userManager.FindByEmailAsync(registerUser.Email);
+
+        var deleteClientPlanEvent = new DeletedUserIntegrationEvent(Guid.Parse(userDb.Id));
+
+        try
+        {
+            return await _bus.RequestAsync<DeletedUserIntegrationEvent, ResponseMessage>(deleteClientPlanEvent);
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
 }

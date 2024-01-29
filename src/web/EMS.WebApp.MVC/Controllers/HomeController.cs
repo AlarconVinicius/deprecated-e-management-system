@@ -1,5 +1,7 @@
-﻿using EMS.WebApp.MVC.Models;
+﻿using EMS.WebAPI.Core.User;
+using EMS.WebApp.MVC.Models;
 using EMS.WebApp.MVC.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.WebApp.MVC.Controllers;
@@ -7,14 +9,17 @@ namespace EMS.WebApp.MVC.Controllers;
 public class HomeController : Controller
 {
     private readonly ISubscriptionService _subscriptionService;
+    private readonly IAspNetUser _appUser;
 
-    public HomeController(ISubscriptionService subscriptionService)
+    public HomeController(ISubscriptionService subscriptionService, IAspNetUser appUser)
     {
         _subscriptionService = subscriptionService;
+        _appUser = appUser;
     }
 
     public async Task<IActionResult> Index()
     {
+        if (_appUser.IsAuthenticated()) return RedirectToAction("DashboardIndex", "Home");
         var plans = await _subscriptionService.GetAll();
         return View(plans);
     }
@@ -31,6 +36,12 @@ public class HomeController : Controller
         };
 
         return View(viewModel);
+    }
+    [Authorize]
+    [Route("dashboard")]
+    public ActionResult DashboardIndex()
+    {
+        return View();
     }
 
     [Route("sistema-indisponivel")]
