@@ -8,7 +8,7 @@
                 Admin Elements
             </li>
             <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
+                <a class="sidebar-link" asp-controller="Home" asp-action="DashboardIndex">
                     <i class="fa-solid fa-list pe-2"></i>
                     Dashboard
                 </a>
@@ -17,16 +17,25 @@
                 <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse"
                    aria-expanded="false">
                     <i class="fa-solid fa-file-lines pe-2"></i>
-                    Pages
+                    Usuários
                 </a>
-                <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                <ul id="pages" class="sidebar-dropdown list-unstyled collapse ms-3" data-bs-parent="#sidebar">
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">Page 1</a>
+                        <a class="sidebar-link" asp-controller="User" asp-action="Subscribers"><i class="fas fa-genderless me-2"></i>Assinantes</a>
                     </li>
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">Page 2</a>
+                        <a class="sidebar-link" asp-controller="User" asp-action="Employees"><i class="fas fa-genderless me-2"></i>Colaboradores</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" asp-controller="User" asp-action="Clients"><i class="fas fa-genderless me-2"></i>Clientes</a>
                     </li>
                 </ul>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" asp-controller="Product" asp-action="Products">
+                    <i class="fa-solid fa-list pe-2"></i>
+                    Produtos
+                </a>
             </li>
         </ul>
     </div>
