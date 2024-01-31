@@ -1,7 +1,6 @@
 ﻿using EMS.Users.API.Business.Interfaces.Repository;
-using EMS.Users.API.Data.Repository;
+using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Models;
-using EMS.Users.API.Models.Dtos;
 using EMS.WebAPI.Core.Services;
 using FluentValidation.Results;
 

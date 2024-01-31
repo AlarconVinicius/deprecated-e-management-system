@@ -1,7 +1,7 @@
 ﻿using EMS.Users.API.Models;
 using FluentValidation.Results;
 
-namespace EMS.Users.API.Business;
+namespace EMS.Users.API.Business.Interfaces.Service;
 
 public interface IClientService
 {
