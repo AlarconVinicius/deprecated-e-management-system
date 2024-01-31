@@ -1,7 +1,8 @@
 ﻿using EMS.Core.Messages.Integration;
 using EMS.MessageBus;
-using EMS.Users.API.Business;
+using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Models;
+using EMS.Users.API.Models.Dtos;
 using FluentValidation.Results;
 
 namespace EMS.Users.API.Services;
@@ -41,7 +42,7 @@ public class UserRegistrationIntegrationHandler : BackgroundService
     private async Task<ResponseMessage> RegisterUser(RegisteredIdentityIntegrationEvent message)
     {
         ValidationResult success;
-        var user = new User(message.Id, message.Name, message.Email, message.Cpf);
+        var user = new UserAddDto(message.Id, message.Name, message.Email, message.Cpf, 0, 0,"", false, EUserType.Subscriber, null, null);
 
         using (var scope = _serviceProvider.CreateScope())
         {

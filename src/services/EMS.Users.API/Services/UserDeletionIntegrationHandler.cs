@@ -1,6 +1,6 @@
 ﻿using EMS.Core.Messages.Integration;
 using EMS.MessageBus;
-using EMS.Users.API.Business;
+using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Models;
 using FluentValidation.Results;
 
@@ -44,7 +44,7 @@ public class UserDeletionIntegrationHandler : BackgroundService
         using (var scope = _serviceProvider.CreateScope())
         {
             var service = scope.ServiceProvider.GetRequiredService<IUserService>();
-            success = await service.DeleteUser(message.Id);
+            success = await service.DeleteUser(message.Id, EUserType.Subscriber);
         }
 
         return new ResponseMessage(success);
