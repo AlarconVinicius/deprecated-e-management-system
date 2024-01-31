@@ -16,19 +16,23 @@ public class ClientRepository : IClientRepository
 
     public IUnitOfWork UnitOfWork => _context;
 
-    public async Task<IEnumerable<Client>> GetAllClients()
+    public async Task<IEnumerable<Client>> GetAllClients(Guid subscriberId)
     {
-        return await _context.Clients.AsNoTracking().ToListAsync();
+        return await _context.Clients.Where(cl => cl.SubscriberId == subscriberId)
+                                     .AsNoTracking()
+                                     .ToListAsync();
     }
 
-    public async Task<Client> GetById(Guid id)
+    public async Task<Client> GetById(Guid id, Guid subscriberId)
     {
-        return await _context.Clients.FirstOrDefaultAsync(c => c.Id == id) ?? null!;
+        return await _context.Clients.Where(cl => cl.SubscriberId == subscriberId)
+                                     .FirstOrDefaultAsync(c => c.Id == id) ?? null!;
     }
 
-    public async Task<Client> GetByCpf(string cpf)
+    public async Task<Client> GetByCpf(string cpf, Guid subscriberId)
     {
-        return await _context.Clients.FirstOrDefaultAsync(c => c.Cpf.Number == cpf) ?? null!;
+        return await _context.Clients.Where(cl => cl.SubscriberId == subscriberId)
+                                     .FirstOrDefaultAsync(c => c.Cpf.Number == cpf) ?? null!;
     }
 
     public void AddClient(Client client)
