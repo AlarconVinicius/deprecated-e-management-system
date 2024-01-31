@@ -30,72 +30,79 @@ public class UserService : MainService, IUserService
 
     public async Task<ValidationResult> AddUser(UserAddDto user)
     {
-        if (user.UserType == EUserType.Subscriber)
+        switch (user.UserType)
         {
-            var userSub = new Subscriber(user.Id, user.Name, user.Email, user.Cpf);
-            await _subscriberService.AddSubscriber(userSub);
-            return _validationResult;
-        }
-        if (user.UserType == EUserType.Worker)
-        {
-            var userWork = new Worker(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty, user.Salary, user.Commission, user.HardSkills);
-            await _workerService.AddWorker(userWork);
-            return _validationResult;
-        }
-        if (user.UserType == EUserType.Client)
-        {
-            var userClient = new Client(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty);
-            await _clientService.AddClient(userClient);
-            return _validationResult;
+            case EUserType.Subscriber:
+                var subscriber = new Subscriber(user.Id, user.Name, user.Email, user.Cpf);
+                await _subscriberService.AddSubscriber(subscriber);
+                break;
+
+            case EUserType.Worker:
+                var worker = new Worker(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty, user.Salary, user.Commission, user.HardSkills);
+                await _workerService.AddWorker(worker);
+                break;
+
+            case EUserType.Client:
+                var client = new Client(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty);
+                await _clientService.AddClient(client);
+                break;
+
+            default:
+                Notify("Falha ao adicionar usuário. Tipo de usuário desconhecido.");
+                break;
         }
 
-        Notify("Falha ao adicionar usuário.");
         return _validationResult;
     }
 
     public async Task<ValidationResult> UpdateUser(UserUpdDto user)
     {
-        if (user.UserType == EUserType.Subscriber)
+        switch (user.UserType)
         {
-            var userSub = new Subscriber(user.Id, user.Name, user.Email);
-            await _subscriberService.UpdateSubscriber(userSub);
-            return _validationResult;
-        }
-        if (user.UserType == EUserType.Worker)
-        {
-            var userWork = new Worker(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty, user.Salary, user.Commission, user.HardSkills);
-            await _workerService.UpdateWorker(userWork);
-            return _validationResult;
-        }
-        if (user.UserType == EUserType.Client)
-        {
-            var userClient = new Client(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty);
-            await _clientService.UpdateClient(userClient);
-            return _validationResult;
+            case EUserType.Subscriber:
+                var subscriber = new Subscriber(user.Id, user.Name, user.Email);
+                await _subscriberService.UpdateSubscriber(subscriber);
+                break;
+
+            case EUserType.Worker:
+                var worker = new Worker(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty, user.Salary, user.Commission, user.HardSkills);
+                await _workerService.UpdateWorker(worker);
+                break;
+
+            case EUserType.Client:
+                var client = new Client(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty);
+                await _clientService.UpdateClient(client);
+                break;
+
+            default:
+                Notify("Falha ao atualizar usuário. Tipo de usuário desconhecido.");
+                break;
         }
 
-        Notify("Falha ao atualizar usuário.");
         return _validationResult;
     }
 
     public async Task<ValidationResult> DeleteUser(Guid id, EUserType userType)
     {
-        if (userType == EUserType.Subscriber)
+        switch (userType)
         {
-            await _subscriberService.DeleteSubscriber(id);
-            return _validationResult;
+            case EUserType.Subscriber:
+                await _subscriberService.DeleteSubscriber(id);
+                break;
+
+            case EUserType.Worker:
+                await _workerService.DeleteWorker(id);
+                break;
+
+            case EUserType.Client:
+                await _clientService.DeleteClient(id);
+                break;
+
+            default:
+                Notify("Falha ao deletar usuário. Tipo de usuário desconhecido.");
+                break;
         }
-        if (userType == EUserType.Worker)
-        {
-            await _workerService.DeleteWorker(id);
-            return _validationResult;
-        }
-        if (userType == EUserType.Client)
-        {
-            await _clientService.DeleteClient(id);
-            return _validationResult;
-        }
-        Notify("Falha ao deletar usuário.");
+
         return _validationResult;
     }
 
