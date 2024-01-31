@@ -1,4 +1,6 @@
 ﻿using EMS.Users.API.Business;
+using EMS.Users.API.Business.Interfaces.Repository;
+using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Data;
 using EMS.Users.API.Data.Repository;
 using EMS.WebAPI.Core.Utils;
@@ -9,8 +11,15 @@ public static class DependencyInjectionConfig
 {
     public static void RegisterServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+        services.AddScoped<IWorkerRepository, WorkerRepository>();
+        services.AddScoped<IClientRepository, ClientRepository>();
+
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ISubscriberService, SubscriberService>();
+        services.AddScoped<IWorkerService, WorkerService>();
+        services.AddScoped<IClientService, ClientService>();
+
         services.AddScoped<UsersContext>();
         services.AddServiceNotifier();
     }
