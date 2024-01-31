@@ -1,7 +1,6 @@
 ﻿using EMS.Users.API.Business.Interfaces.Repository;
-using EMS.Users.API.Data.Repository;
+using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Models;
-using EMS.Users.API.Models.Dtos;
 using EMS.WebAPI.Core.Services;
 using FluentValidation.Results;
 
@@ -10,28 +9,40 @@ namespace EMS.Users.API.Business;
 public class ClientService : MainService, IClientService
 {
     private readonly IClientRepository _clientRepository;
-    public ClientService(IClientRepository clientRepository, INotifier notifier) : base(notifier)
+    private readonly ISubscriberRepository _subscriberRepository;
+    private readonly IWorkerRepository _workerRepository;
+    public ClientService(IClientRepository clientRepository, INotifier notifier, IWorkerRepository workerRepository, ISubscriberRepository subscriberRepository) : base(notifier)
     {
         _clientRepository = clientRepository;
+        _workerRepository = workerRepository;
+        _subscriberRepository = subscriberRepository;
     }
 
-    public Task<IEnumerable<Client>> GetAllClients()
+    public async Task<IEnumerable<Client>> GetAllClients(Guid userId)
     {
-        throw new NotImplementedException();
+        var subscriberId = await IsSubscriberOrWorker(userId);
+
+        if(subscriberId == Guid.Empty) return null!;
+
+        return await _clientRepository.GetAllClients(subscriberId);
     }
 
-    public Task<Client> GetByCpf(string cpf)
+    public async Task<Client> GetByCpf(string cpf, Guid userId)
     {
-        throw new NotImplementedException();
+        var subscriberId = await IsSubscriberOrWorker(userId);
+
+        if (subscriberId == Guid.Empty) return null!;
+
+        return await _clientRepository.GetByCpf(cpf, subscriberId);
     }
 
     public async Task<ValidationResult> AddClient(Client client)
     {
         //if (!ExecuteValidation(new ClientValidation(), client)) return _validationResult;
 
-        if (!SubscriberIdIsValid(client.SubscriberId)) return _validationResult;
+        if (!await SubscriberIdIsValid(client.SubscriberId)) return _validationResult;
 
-        if (await UserExists(client.Cpf.Number)) return _validationResult;
+        if (await UserExistsByCpf(client.Cpf.Number, client.SubscriberId)) return _validationResult;
 
         _clientRepository.AddClient(client);
 
@@ -43,8 +54,13 @@ public class ClientService : MainService, IClientService
     public async Task<ValidationResult> UpdateClient(Client client)
     {
         //if (!ExecuteValidation(new ClientValidation(), subscriber)) return _validationResult;
+        var subscriberId = await IsSubscriberOrWorker(client.SubscriberId);
 
-        var clientDb = await _clientRepository.GetById(client.Id);
+        if (subscriberId == Guid.Empty) return _validationResult;
+
+        if (!await UserExistsById(client.Id, subscriberId)) return _validationResult;
+
+        var clientDb = await _clientRepository.GetById(client.Id, client.SubscriberId);
 
         clientDb.ChangeName(client.Name);
         clientDb.ChangeEmail(client.Email.Address);
@@ -56,9 +72,13 @@ public class ClientService : MainService, IClientService
         return _validationResult;
     }
 
-    public async Task<ValidationResult> DeleteClient(Guid id)
+    public async Task<ValidationResult> DeleteClient(Guid id, Guid userId)
     {
-        var userDb = await _clientRepository.GetById(id);
+        var subscriberId = await IsSubscriberOrWorker(userId);
+
+        if (subscriberId == Guid.Empty) return null!;
+
+        var userDb = await _clientRepository.GetById(id, subscriberId);
         if (userDb is null)
         {
             Notify("Usuário não encontrado");
@@ -76,9 +96,62 @@ public class ClientService : MainService, IClientService
 
 
     #region Auxiliary Methods
-    private async Task<bool> UserExists(string cpf)
+    private async Task<Guid> IsSubscriberOrWorker(Guid userId)
     {
-        var userExist = await _clientRepository.GetByCpf(cpf);
+        Guid searchForId;
+        var subsExist = await _subscriberRepository.GetById(userId);
+        var workerExist = await _workerRepository.GetById(userId);
+        if (subsExist != null!)
+        {
+            searchForId = subsExist.Id;
+        }
+        else if (workerExist != null!)
+        {
+            searchForId = workerExist.SubscriberId;
+        }
+        else
+        {
+            Notify("Falha ao buscar clientes.");
+            return Guid.Empty;
+        };
+        if(await SubscriberIdIsValid(searchForId)) return searchForId;
+
+        Notify("Falha ao buscar clientes.");
+        return Guid.Empty;
+    }
+    private async Task<bool> SubscriberIdIsValid(Guid? subscriberId)
+    {
+        var subscriber = await _subscriberRepository.GetById(subscriberId ?? Guid.Empty);
+        if (subscriberId is null || subscriberId == Guid.Empty || subscriber is null)
+        {
+            Notify("Id do assinante, inválido.");
+            return false;
+        }
+        return true;
+    }
+    private async Task<bool> UserExistsById(Guid id, Guid userId)
+    {
+        var subscriberId = await IsSubscriberOrWorker(userId);
+
+        if (subscriberId == Guid.Empty) return false;
+
+        var userExist = await _clientRepository.GetById(id, subscriberId);
+
+        if (userExist is null)
+        {
+            Notify("Usuário não encontrado.");
+            return false;
+        };
+        return true;
+    }
+
+    private async Task<bool> UserExistsByCpf(string cpf, Guid userId)
+    {
+        var subscriberId = await IsSubscriberOrWorker(userId);
+
+        if (subscriberId == Guid.Empty) return false;
+
+        var userExist = await _clientRepository.GetByCpf(cpf, subscriberId);
 
         if (userExist != null!)
         {
@@ -86,15 +159,6 @@ public class ClientService : MainService, IClientService
             return true;
         };
         return false;
-    }
-    private bool SubscriberIdIsValid(Guid? subscriberId)
-    {
-        if (subscriberId is null || subscriberId == Guid.Empty)
-        {
-            Notify("Id do assinante, inválido.");
-            return false;
-        }
-        return true;
     }
     private async Task<ValidationResult> PersistData()
     {

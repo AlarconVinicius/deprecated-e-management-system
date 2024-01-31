@@ -112,7 +112,7 @@ public class Client : User
 
     [JsonIgnore]
     public Subscriber? Subscriber { get; set; }
-    protected Client() { }
+    public Client() { }
 
     public Client(Guid id, string name, string email, Guid subscriberId) : base(id, name, email)
     {
