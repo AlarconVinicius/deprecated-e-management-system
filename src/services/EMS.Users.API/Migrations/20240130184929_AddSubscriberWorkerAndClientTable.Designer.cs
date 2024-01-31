@@ -4,6 +4,7 @@ using EMS.Users.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMS.Users.API.Migrations
 {
     [DbContext(typeof(UsersContext))]
-    partial class UsersContextModelSnapshot : ModelSnapshot
+    [Migration("20240130184929_AddSubscriberWorkerAndClientTable")]
+    partial class AddSubscriberWorkerAndClientTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
