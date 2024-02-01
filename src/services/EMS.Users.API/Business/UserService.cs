@@ -10,12 +10,10 @@ public class UserService : MainService, IUserService
 {
     private readonly ISubscriberService _subscriberService;
     private readonly IWorkerService _workerService;
-    private readonly IClientService _clientService;
-    public UserService(ISubscriberService subscriberService, IWorkerService workerService, IClientService clientService, INotifier notifier) : base(notifier)
+    public UserService(ISubscriberService subscriberService, IWorkerService workerService, INotifier notifier) : base(notifier)
     {
         _subscriberService = subscriberService;
         _workerService = workerService;
-        _clientService = clientService;
     }
 
     public Task<IEnumerable<User>> GetAllUsers()
@@ -42,11 +40,6 @@ public class UserService : MainService, IUserService
                 await _workerService.AddWorker(worker);
                 break;
 
-            case EUserType.Client:
-                var client = new Client(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty);
-                await _clientService.AddClient(client);
-                break;
-
             default:
                 Notify("Falha ao adicionar usuário. Tipo de usuário desconhecido.");
                 break;
@@ -69,11 +62,6 @@ public class UserService : MainService, IUserService
                 await _workerService.UpdateWorker(worker);
                 break;
 
-            case EUserType.Client:
-                var client = new Client(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty);
-                await _clientService.UpdateClient(client);
-                break;
-
             default:
                 Notify("Falha ao atualizar usuário. Tipo de usuário desconhecido.");
                 break;
@@ -92,10 +80,6 @@ public class UserService : MainService, IUserService
 
             case EUserType.Worker:
                 await _workerService.DeleteWorker(id);
-                break;
-
-            case EUserType.Client:
-                await _clientService.DeleteClient(id);
                 break;
 
             default:
