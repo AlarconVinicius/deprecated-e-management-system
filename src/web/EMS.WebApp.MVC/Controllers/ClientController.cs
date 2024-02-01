@@ -8,7 +8,7 @@ namespace EMS.WebApp.MVC.Controllers;
 
 [Authorize]
 [Route("cliente")]
-public class ClientController : Controller
+public class ClientController : MainController
 {
     private readonly IClientService _clientService;
     private readonly IAspNetUser _appUser;
