@@ -36,22 +36,22 @@ public class ClientService : MainService, IClientService
         return new ClientDto(result.Id, result.Name, result.Email.Address, result.Cpf.Number, result.IsDeleted, result.SubscriberId);
     }
 
-    public async Task<ValidationResult> AddClient(Client client)
+    public async Task<ValidationResult> AddClient(ClientAddDto client)
     {
         //if (!ExecuteValidation(new ClientValidation(), client)) return _validationResult;
 
         if (!await SubscriberIdIsValid(client.SubscriberId)) return _validationResult;
 
-        if (await UserExistsByCpf(client.Cpf.Number, client.SubscriberId)) return _validationResult;
-
-        _clientRepository.AddClient(client);
+        if (await UserExistsByCpf(client.Cpf, client.SubscriberId)) return _validationResult;
+        
+        _clientRepository.AddClient(new Client(client.Id, client.Name, client.Email, client.Cpf, client.SubscriberId));
 
         await PersistData();
 
         return _validationResult;
     }
 
-    public async Task<ValidationResult> UpdateClient(Client client)
+    public async Task<ValidationResult> UpdateClient(ClientUpdDto client)
     {
         //if (!ExecuteValidation(new ClientValidation(), subscriber)) return _validationResult;
         var subscriberId = await IsSubscriberOrWorker(client.SubscriberId);
@@ -63,7 +63,8 @@ public class ClientService : MainService, IClientService
         var clientDb = await _clientRepository.GetById(client.Id, client.SubscriberId);
 
         clientDb.ChangeName(client.Name);
-        clientDb.ChangeEmail(client.Email.Address);
+        clientDb.ChangeEmail(client.Email);
+        clientDb.ChangeIsDeleted(client.IsDeleted);
 
         _clientRepository.UpdateClient(clientDb);
 
