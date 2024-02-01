@@ -82,10 +82,31 @@ public class ClientController : MainController
         return RedirectToAction("Index", "Client");
     }
 
-    [Route("deletar/{cpf}")]
+    [HttpPost("deletar/{cpf}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(string cpf)
     {
-        var user = await _clientService.GetByCpf(cpf, _appUser.GetUserId());
-        return View(user);
+        var userId = _appUser.GetUserId();
+        var user = await _clientService.GetByCpf(cpf, userId);
+
+        var response = await _clientService.DeleteClient(user.Id, userId);
+
+        if (HasErrorsInResponse(response.ResponseResult!)) return View("Index");
+
+        return RedirectToAction("Index", "Client");
+    }
+
+    [HttpPost]
+    [Route("bloquear/{cpf}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BlockClient(string cpf)
+    {
+        var clientDb = await _clientService.GetByCpf(cpf, _appUser.GetUserId());
+        clientDb.IsDeleted = !clientDb.IsDeleted;
+        var response = await _clientService.UpdateClient(clientDb);
+
+        if (HasErrorsInResponse(response.ResponseResult!)) return View();
+
+        return RedirectToAction("Index", "Client");
     }
 }
