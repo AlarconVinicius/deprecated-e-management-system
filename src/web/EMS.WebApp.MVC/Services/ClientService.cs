@@ -11,7 +11,7 @@ public class ClientService : Service, IClientService
     public ClientService(HttpClient httpClient,
         IOptions<AppSettings> settings)
     {
-        httpClient.BaseAddress = new Uri(settings.Value.UserUrl!);
+        httpClient.BaseAddress = new Uri(settings.Value.ClientUrl!);
 
         _httpClient = httpClient;
     }
