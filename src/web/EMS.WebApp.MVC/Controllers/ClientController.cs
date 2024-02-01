@@ -41,6 +41,19 @@ public class ClientController : MainController
         return View();
     }
 
+    [HttpPost("adicionar")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([Bind("Id,Name,Email,Cpf,IsDeleted,SubscriberId")] ClientViewModel client)
+    {
+        if (!ModelState.IsValid) return View(client);
+
+        var response = await _clientService.AddClient(client);
+
+        if (HasErrorsInResponse(response.ResponseResult!)) return View(client);
+
+        return RedirectToAction("Index", "Client");
+    }
+
     [Route("editar/{cpf}")]
     public async Task<IActionResult> Edit(string cpf)
     {
