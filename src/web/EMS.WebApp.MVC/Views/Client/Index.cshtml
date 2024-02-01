@@ -1,6 +1,6 @@
 ﻿@using EMS.WebAPI.Core.User;
 @using EMS.WebApp.MVC.Extensions;
-@model IEnumerable<EMS.WebApp.MVC.Models.ClientViewModel>
+@model EMS.WebApp.MVC.Models.ClientViewModels
 @inject IAspNetUser AppUser
 @{
     Layout = "_LayoutAdmin";
@@ -49,7 +49,7 @@
             </thead>
             <tbody>
                 @{
-                    foreach (var client in Model)
+                    foreach (var client in Model.Clients)
                     {
                         <tr>
                             <th scope="row">1</th>

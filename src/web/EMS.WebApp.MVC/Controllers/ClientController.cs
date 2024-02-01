@@ -22,8 +22,10 @@ public class ClientController : Controller
     public async Task<IActionResult> Index()
     {
         if (!_appUser.IsAuthenticated()) return RedirectToAction("Index", "Home");
-        IEnumerable<ClientViewModel> users = await _clientService.GetAll(_appUser.GetUserId());
-        return View(users);
+        IEnumerable<ClientViewModel> clients = await _clientService.GetAll(_appUser.GetUserId());
+
+        var viewModel = new ClientViewModels(new ClientViewModel(), clients);
+        return View(viewModel);
     }
 
     [Route("detalhes/{cpf}")]
