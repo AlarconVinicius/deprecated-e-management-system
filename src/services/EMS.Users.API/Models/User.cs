@@ -43,7 +43,12 @@ public abstract class User : Entity, IAggregateRoot
     {
         Name = name;
     }
-    
+
+    public void ChangeIsDeleted(bool isDeleted)
+    {
+        IsDeleted = isDeleted;
+    }
+
 }
 public class Subscriber : User
 {
