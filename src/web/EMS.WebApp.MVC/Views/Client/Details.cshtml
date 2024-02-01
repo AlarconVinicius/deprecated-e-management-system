@@ -1,0 +1,54 @@
+﻿@using EMS.WebAPI.Core.User;
+@using EMS.WebApp.MVC.Extensions;
+@model EMS.WebApp.MVC.Models.ClientViewModel
+@inject IAspNetUser AppUser
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="mb-3">
+    <h4>Clientes</h4>
+</div>
+<div class="card border-0 col-md-12">
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">
+            Cliente: @Model.Name
+        </h5>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Cpf)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Cpf)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </dt>
+            <dd class="col-sm-10">
+                @{
+                    string statusText = Model.IsDeleted ? "Bloqueado" : "Desbloqueado";
+                }
+                @statusText
+            </dd>
+        </dl>
+    </div>
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-warning">Voltar</a>
+    <a asp-controller="Client" asp-action="Edit" asp-route-cpf="@Model.Cpf" class="btn btn-info">Editar</a>
+</div>

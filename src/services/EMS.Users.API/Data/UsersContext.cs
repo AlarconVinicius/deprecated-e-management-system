@@ -15,7 +15,9 @@ public sealed class UsersContext : DbContext, IUnitOfWork
         ChangeTracker.AutoDetectChangesEnabled = false;
     }
 
-    public DbSet<User> Users { get; set; }
+    public DbSet<Subscriber> Subscribers { get; set; }
+    public DbSet<Worker> Workers { get; set; }
+    public DbSet<Client> Clients { get; set; }
     public DbSet<Address> Adresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,6 +1,6 @@
-﻿using EMS.Users.API.Data.Repository;
+﻿using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Models;
-using EMS.Users.API.Models.Validations;
+using EMS.Users.API.Models.Dtos;
 using EMS.WebAPI.Core.Services;
 using FluentValidation.Results;
 
@@ -8,49 +8,14 @@ namespace EMS.Users.API.Business;
 
 public class UserService : MainService, IUserService
 {
-    private readonly IUserRepository _userRepository;
-    public UserService(IUserRepository userRepository, INotifier notifier) : base(notifier)
+    private readonly ISubscriberService _subscriberService;
+    private readonly IWorkerService _workerService;
+    private readonly IClientService _clientService;
+    public UserService(ISubscriberService subscriberService, IWorkerService workerService, IClientService clientService, INotifier notifier) : base(notifier)
     {
-        _userRepository = userRepository;
-    }
-
-    public async Task<ValidationResult> AddUser(User user)
-    {
-        if (!ExecuteValidation(new UserValidation(), user)) return _validationResult;
-
-        var userExist = await _userRepository.GetByCpf(user.Cpf.Number);
-
-        if (userExist != null!)
-        {
-            Notify("Este CPF já está em uso.");
-            return _validationResult;
-        }
-        _userRepository.AddUser(user);
-
-        if(!await _userRepository.UnitOfWork.Commit())
-        {
-            Notify("Houve um erro ao persistir os dados");
-            return _validationResult;
-        };
-        return _validationResult;
-    }
-
-    public async Task<ValidationResult> DeleteUser(Guid id)
-    {
-        var userDb = await _userRepository.GetById(id);
-        if (userDb is null)
-        {
-            Notify("Usuário não encontrado");
-            return _validationResult;
-        }
-        _userRepository.DeleteUser(userDb);
-
-        if (!await _userRepository.UnitOfWork.Commit())
-        {
-            Notify("Houve um erro ao persistir os dados");
-            return _validationResult;
-        };
-        return _validationResult;
+        _subscriberService = subscriberService;
+        _workerService = workerService;
+        _clientService = clientService;
     }
 
     public Task<IEnumerable<User>> GetAllUsers()
@@ -62,4 +27,83 @@ public class UserService : MainService, IUserService
     {
         throw new NotImplementedException();
     }
+
+    public async Task<ValidationResult> AddUser(UserAddDto user)
+    {
+        switch (user.UserType)
+        {
+            case EUserType.Subscriber:
+                var subscriber = new Subscriber(user.Id, user.Name, user.Email, user.Cpf);
+                await _subscriberService.AddSubscriber(subscriber);
+                break;
+
+            case EUserType.Worker:
+                var worker = new Worker(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty, user.Salary, user.Commission, user.HardSkills);
+                await _workerService.AddWorker(worker);
+                break;
+
+            case EUserType.Client:
+                var client = new Client(user.Id, user.Name, user.Email, user.Cpf, user.SubscriberId ?? Guid.Empty);
+                await _clientService.AddClient(client);
+                break;
+
+            default:
+                Notify("Falha ao adicionar usuário. Tipo de usuário desconhecido.");
+                break;
+        }
+
+        return _validationResult;
+    }
+
+    public async Task<ValidationResult> UpdateUser(UserUpdDto user)
+    {
+        switch (user.UserType)
+        {
+            case EUserType.Subscriber:
+                var subscriber = new Subscriber(user.Id, user.Name, user.Email);
+                await _subscriberService.UpdateSubscriber(subscriber);
+                break;
+
+            case EUserType.Worker:
+                var worker = new Worker(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty, user.Salary, user.Commission, user.HardSkills);
+                await _workerService.UpdateWorker(worker);
+                break;
+
+            case EUserType.Client:
+                var client = new Client(user.Id, user.Name, user.Email, user.SubscriberId ?? Guid.Empty);
+                await _clientService.UpdateClient(client);
+                break;
+
+            default:
+                Notify("Falha ao atualizar usuário. Tipo de usuário desconhecido.");
+                break;
+        }
+
+        return _validationResult;
+    }
+
+    public async Task<ValidationResult> DeleteUser(Guid id, EUserType userType)
+    {
+        switch (userType)
+        {
+            case EUserType.Subscriber:
+                await _subscriberService.DeleteSubscriber(id);
+                break;
+
+            case EUserType.Worker:
+                await _workerService.DeleteWorker(id);
+                break;
+
+            case EUserType.Client:
+                await _clientService.DeleteClient(id);
+                break;
+
+            default:
+                Notify("Falha ao deletar usuário. Tipo de usuário desconhecido.");
+                break;
+        }
+
+        return _validationResult;
+    }
+
 }

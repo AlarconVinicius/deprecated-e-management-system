@@ -1,0 +1,117 @@
+﻿@using EMS.WebAPI.Core.User;
+@using EMS.WebApp.MVC.Extensions;
+@model EMS.WebApp.MVC.Models.ClientViewModels
+@inject IAspNetUser AppUser
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="mb-3">
+    <h4>Clientes</h4>
+</div>
+<div class="card border-0 col-md-12">
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">
+            Clientes
+        </h5>
+        <div class="d-flex align-items-center">
+            <div class="input-group me-3">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Pesquisar"
+                       aria-label="Pesquisar"
+                       aria-describedby="pesquisar" />
+                <button class="btn btn-outline-secondary"
+                        type="button"
+                        id="pesquisar">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            <a class="btn btn-success align-self-center w-75" asp-controller="Client" asp-action="Create">
+                Adicionar Clientes
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Imagem</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">CPF</th>
+                    <th scope="col">Telefone</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var (client, index) in Model.Clients.Select((c, i) => (c, i + 1)))
+                    {
+                        <tr>
+                            <th scope="row">@index</th>
+                            <td>Imagem ABC</td>
+                            <td>@client.Name</td>
+                            <td>@client.Email</td>
+                            <td>@client.Cpf</td>
+                            <td>21999999999</td>
+                            <td>
+                                @{
+                                    string statusText = client.IsDeleted ? "Bloqueado" : "Desbloqueado";
+                                    string iconClass = client.IsDeleted ? "fa-lock" : "fa-unlock";
+                                }
+                                @statusText
+                            </td>
+                            <td>
+                                <form asp-action="BlockClient" asp-route-cpf="@client.Cpf" class="d-inline">
+                                    <button class="btn btn-info me-3" type="submit"><span class="fa @iconClass"></span></button>
+                                </form>
+                                <a class="btn btn-warning me-3" asp-controller="Client" asp-action="Details" asp-route-cpf="@client.Cpf"><span class="fa fa-eye"></span></a>
+                                <a class="btn btn-warning me-3" asp-controller="Client" asp-action="Edit" asp-route-cpf="@client.Cpf"><span class="fa fa-pencil-alt"></span></a>
+                                <a data-bs-toggle="modal" data-bs-target="#ModalDeleteRecipe" class="btn btn-danger" onclick="openModalDelete('@client.Name', '@client.Cpf')"><span class="fa fa-trash"></span></a>
+                            </td>
+                        </tr>
+                    }
+    
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Delete - Modal Start -->
+<div class="modal fade" id="ModalDeleteRecipe" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="ModalDeleteRecipeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalDeleteRecipeLabel"></h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post"  id="deleteForm">
+                    <input type="hidden" asp-for="Client.Cpf" />
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Deletar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete - Modal End -->
+
+<script>
+    function openModalDelete(name, cpf) {
+        $('#ModalDeleteRecipeLabel').text('Deletar Cliente: ' + name);
+        $('#deleteForm').attr('action', '/cliente/deletar/' + cpf);
+        $('input[name="Client.Cpf"]').val(cpf);
+    }
+</script>

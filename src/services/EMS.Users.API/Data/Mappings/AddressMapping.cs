@@ -8,6 +8,8 @@ public class AddressMapping : IEntityTypeConfiguration<Address>
 {
     public void Configure(EntityTypeBuilder<Address> builder)
     {
+        builder.ToTable("Adresses");
+
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.Street)
@@ -36,7 +38,5 @@ public class AddressMapping : IEntityTypeConfiguration<Address>
         builder.Property(c => c.State)
             .IsRequired()
             .HasColumnType("varchar(50)");
-
-        builder.ToTable("Adresses");
     }
 }

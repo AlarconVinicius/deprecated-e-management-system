@@ -27,10 +27,4 @@ public class UserController : MainController
     {
         return View();
     }
-
-    [Route("clientes")]
-    public IActionResult Clients()
-    {
-        return View();
-    }
 }

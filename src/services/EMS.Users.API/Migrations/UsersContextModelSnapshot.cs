@@ -67,7 +67,28 @@ namespace EMS.Users.API.Migrations
                     b.ToTable("Adresses", (string)null);
                 });
 
-            modelBuilder.Entity("EMS.Users.API.Models.User", b =>
+            modelBuilder.Entity("EMS.Users.API.Models.Client", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<Guid>("SubscriberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients", (string)null);
+                });
+
+            modelBuilder.Entity("EMS.Users.API.Models.Subscriber", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,24 +103,70 @@ namespace EMS.Users.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Subscribers", (string)null);
+                });
+
+            modelBuilder.Entity("EMS.Users.API.Models.Worker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Commission")
+                        .HasColumnType("float");
+
+                    b.Property<string>("HardSkills")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<double>("Salary")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("SubscriberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Workers", (string)null);
                 });
 
             modelBuilder.Entity("EMS.Users.API.Models.Address", b =>
                 {
-                    b.HasOne("EMS.Users.API.Models.User", "User")
+                    b.HasOne("EMS.Users.API.Models.Client", "Client")
                         .WithOne("Address")
                         .HasForeignKey("EMS.Users.API.Models.Address", "UserId")
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("EMS.Users.API.Models.Subscriber", "Subscriber")
+                        .WithOne("Address")
+                        .HasForeignKey("EMS.Users.API.Models.Address", "UserId")
+                        .IsRequired();
+
+                    b.HasOne("EMS.Users.API.Models.Worker", "Worker")
+                        .WithOne("Address")
+                        .HasForeignKey("EMS.Users.API.Models.Address", "UserId")
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Subscriber");
+
+                    b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("EMS.Users.API.Models.User", b =>
+            modelBuilder.Entity("EMS.Users.API.Models.Client", b =>
                 {
                     b.OwnsOne("EMS.Core.DomainObjects.Cpf", "Cpf", b1 =>
                         {
-                            b1.Property<Guid>("UserId")
+                            b1.Property<Guid>("ClientId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Number")
@@ -108,17 +175,17 @@ namespace EMS.Users.API.Migrations
                                 .HasColumnType("varchar(11)")
                                 .HasColumnName("Cpf");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("ClientId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Clients");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId");
+                                .HasForeignKey("ClientId");
                         });
 
                     b.OwnsOne("EMS.Core.DomainObjects.Email", "Email", b1 =>
                         {
-                            b1.Property<Guid>("UserId")
+                            b1.Property<Guid>("ClientId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Address")
@@ -126,12 +193,12 @@ namespace EMS.Users.API.Migrations
                                 .HasColumnType("varchar(254)")
                                 .HasColumnName("Email");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("ClientId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Clients");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId");
+                                .HasForeignKey("ClientId");
                         });
 
                     b.Navigation("Cpf")
@@ -141,10 +208,111 @@ namespace EMS.Users.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EMS.Users.API.Models.User", b =>
+            modelBuilder.Entity("EMS.Users.API.Models.Subscriber", b =>
                 {
-                    b.Navigation("Address")
+                    b.OwnsOne("EMS.Core.DomainObjects.Cpf", "Cpf", b1 =>
+                        {
+                            b1.Property<Guid>("SubscriberId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasMaxLength(11)
+                                .HasColumnType("varchar(11)")
+                                .HasColumnName("Cpf");
+
+                            b1.HasKey("SubscriberId");
+
+                            b1.ToTable("Subscribers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubscriberId");
+                        });
+
+                    b.OwnsOne("EMS.Core.DomainObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("SubscriberId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Address")
+                                .IsRequired()
+                                .HasColumnType("varchar(254)")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("SubscriberId");
+
+                            b1.ToTable("Subscribers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubscriberId");
+                        });
+
+                    b.Navigation("Cpf")
                         .IsRequired();
+
+                    b.Navigation("Email")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EMS.Users.API.Models.Worker", b =>
+                {
+                    b.OwnsOne("EMS.Core.DomainObjects.Cpf", "Cpf", b1 =>
+                        {
+                            b1.Property<Guid>("WorkerId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasMaxLength(11)
+                                .HasColumnType("varchar(11)")
+                                .HasColumnName("Cpf");
+
+                            b1.HasKey("WorkerId");
+
+                            b1.ToTable("Workers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("WorkerId");
+                        });
+
+                    b.OwnsOne("EMS.Core.DomainObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("WorkerId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Address")
+                                .IsRequired()
+                                .HasColumnType("varchar(254)")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("WorkerId");
+
+                            b1.ToTable("Workers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("WorkerId");
+                        });
+
+                    b.Navigation("Cpf")
+                        .IsRequired();
+
+                    b.Navigation("Email")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EMS.Users.API.Models.Client", b =>
+                {
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("EMS.Users.API.Models.Subscriber", b =>
+                {
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("EMS.Users.API.Models.Worker", b =>
+                {
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }
