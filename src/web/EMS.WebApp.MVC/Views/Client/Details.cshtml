@@ -50,5 +50,5 @@
 </div>
 <div>
     <a asp-action="Index" class="btn btn-warning">Voltar</a>
-    <a asp-action="Index" class="btn btn-info">Editar</a>
+    <a asp-controller="Client" asp-action="Edit" asp-route-cpf="@Model.Cpf" class="btn btn-info">Editar</a>
 </div>

@@ -49,10 +49,10 @@
             </thead>
             <tbody>
                 @{
-                    foreach (var client in Model.Clients)
+                    foreach (var (client, index) in Model.Clients.Select((c, i) => (c, i + 1)))
                     {
                         <tr>
-                            <th scope="row">1</th>
+                            <th scope="row">@index</th>
                             <td>Imagem ABC</td>
                             <td>@client.Name</td>
                             <td>@client.Email</td>
@@ -66,11 +66,12 @@
                                 @statusText
                             </td>
                             <td>
-                                <a href="#" class="btn btn-info me-3"><span class="fa @iconClass"></span></a>
+                                <form asp-action="BlockClient" asp-route-cpf="@client.Cpf" class="d-inline">
+                                    <button class="btn btn-info me-3" type="submit"><span class="fa @iconClass"></span></button>
+                                </form>
                                 <a class="btn btn-warning me-3" asp-controller="Client" asp-action="Details" asp-route-cpf="@client.Cpf"><span class="fa fa-eye"></span></a>
                                 <a class="btn btn-warning me-3" asp-controller="Client" asp-action="Edit" asp-route-cpf="@client.Cpf"><span class="fa fa-pencil-alt"></span></a>
-                                <a class="btn btn-danger" asp-controller="Client" asp-action="Delete" asp-route-cpf="@client.Cpf"><span class="fa fa-trash"></span></a>
-                                @* <a data-bs-toggle="modal" data-bs-target="#ModalDeleteRecipe" class="btn btn-danger" asp-controller="Client" asp-action="Delete"><span class="fa fa-trash"></span></a>*@
+                                <a data-bs-toggle="modal" data-bs-target="#ModalDeleteRecipe" class="btn btn-danger" onclick="openModalDelete('@client.Name', '@client.Cpf')"><span class="fa fa-trash"></span></a>
                             </td>
                         </tr>
                     }
@@ -80,3 +81,37 @@
         </table>
     </div>
 </div>
+<!-- Delete - Modal Start -->
+<div class="modal fade" id="ModalDeleteRecipe" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="ModalDeleteRecipeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalDeleteRecipeLabel"></h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post"  id="deleteForm">
+                    <input type="hidden" asp-for="Client.Cpf" />
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Deletar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete - Modal End -->
+
+<script>
+    function openModalDelete(name, cpf) {
+        $('#ModalDeleteRecipeLabel').text('Deletar Cliente: ' + name);
+        $('#deleteForm').attr('action', '/cliente/deletar/' + cpf);
+        $('input[name="Client.Cpf"]').val(cpf);
+    }
+</script>
