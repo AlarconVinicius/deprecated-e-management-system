@@ -1,6 +1,7 @@
 ﻿using EMS.Users.API.Business.Interfaces.Repository;
 using EMS.Users.API.Business.Interfaces.Service;
 using EMS.Users.API.Models;
+using EMS.Users.API.Models.Dtos;
 using EMS.WebAPI.Core.Services;
 using FluentValidation.Results;
 
@@ -18,22 +19,21 @@ public class ClientService : MainService, IClientService
         _subscriberRepository = subscriberRepository;
     }
 
-    public async Task<IEnumerable<Client>> GetAllClients(Guid userId)
+    public async Task<IEnumerable<ClientDto>> GetAllClients(Guid userId)
     {
         var subscriberId = await IsSubscriberOrWorker(userId);
 
         if(subscriberId == Guid.Empty) return null!;
-
-        return await _clientRepository.GetAllClients(subscriberId);
+        return (await _clientRepository.GetAllClients(subscriberId)).Select(cl => new ClientDto(cl.Id, cl.Name, cl.Email.Address, cl.Cpf.Number, cl.IsDeleted, cl.SubscriberId));
     }
 
-    public async Task<Client> GetByCpf(string cpf, Guid userId)
+    public async Task<ClientDto> GetByCpf(string cpf, Guid userId)
     {
         var subscriberId = await IsSubscriberOrWorker(userId);
 
         if (subscriberId == Guid.Empty) return null!;
-
-        return await _clientRepository.GetByCpf(cpf, subscriberId);
+        var result = await _clientRepository.GetByCpf(cpf, subscriberId);
+        return new ClientDto(result.Id, result.Name, result.Email.Address, result.Cpf.Number, result.IsDeleted, result.SubscriberId);
     }
 
     public async Task<ValidationResult> AddClient(Client client)
