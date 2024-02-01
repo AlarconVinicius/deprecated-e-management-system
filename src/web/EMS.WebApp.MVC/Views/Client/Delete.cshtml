@@ -1,0 +1,17 @@
+﻿@using EMS.WebAPI.Core.User;
+@model EMS.WebApp.MVC.Models.ClientViewModel
+@inject IAspNetUser AppUser
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Você tem certeza que deseja deletar o cliente: @Model.Name?</h3>
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+    <a asp-action="Index" class="btn btn-warning">Voltar</a>
+    <input type="submit" value="Delete" class="btn btn-danger" />
+</form>

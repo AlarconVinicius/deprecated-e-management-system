@@ -1,0 +1,82 @@
+﻿@using EMS.WebAPI.Core.User;
+@using EMS.WebApp.MVC.Extensions;
+@model IEnumerable<EMS.WebApp.MVC.Models.ClientViewModel>
+@inject IAspNetUser AppUser
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="mb-3">
+    <h4>Clientes</h4>
+</div>
+<div class="card border-0 col-md-12">
+    <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">
+            Clientes
+        </h5>
+        <div class="d-flex align-items-center">
+            <div class="input-group me-3">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Pesquisar"
+                       aria-label="Pesquisar"
+                       aria-describedby="pesquisar" />
+                <button class="btn btn-outline-secondary"
+                        type="button"
+                        id="pesquisar">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            <a class="btn btn-success align-self-center w-75" asp-controller="Client" asp-action="Create">
+                Adicionar Clientes
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Imagem</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">CPF</th>
+                    <th scope="col">Telefone</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var client in Model)
+                    {
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Imagem ABC</td>
+                            <td>@client.Name</td>
+                            <td>@client.Email</td>
+                            <td>@client.Cpf</td>
+                            <td>21999999999</td>
+                            <td>
+                                @{
+                                    string statusText = client.IsDeleted ? "Bloqueado" : "Desbloqueado";
+                                    string iconClass = client.IsDeleted ? "fa-lock" : "fa-unlock";
+                                }
+                                @statusText
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-info me-3"><span class="fa @iconClass"></span></a>
+                                <a class="btn btn-warning me-3" asp-controller="Client" asp-action="Details" asp-route-cpf="@client.Cpf"><span class="fa fa-eye"></span></a>
+                                <a class="btn btn-warning me-3" asp-controller="Client" asp-action="Edit" asp-route-cpf="@client.Cpf"><span class="fa fa-pencil-alt"></span></a>
+                                <a class="btn btn-danger" asp-controller="Client" asp-action="Delete" asp-route-cpf="@client.Cpf"><span class="fa fa-trash"></span></a>
+                                @* <a data-bs-toggle="modal" data-bs-target="#ModalDeleteRecipe" class="btn btn-danger" asp-controller="Client" asp-action="Delete"><span class="fa fa-trash"></span></a>*@
+                            </td>
+                        </tr>
+                    }
+    
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
