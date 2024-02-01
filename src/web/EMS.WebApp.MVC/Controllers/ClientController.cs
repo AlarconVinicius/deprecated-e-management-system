@@ -57,8 +57,29 @@ public class ClientController : MainController
     [Route("editar/{cpf}")]
     public async Task<IActionResult> Edit(string cpf)
     {
-        var user = await _clientService.GetByCpf(cpf, _appUser.GetUserId());
-        return View(user);
+        var client = await _clientService.GetByCpf(cpf, _appUser.GetUserId());
+        if (client == null)
+        {
+            return NotFound();
+    }
+        return View(client);
+    }
+
+    [HttpPost]
+    [Route("editar/{cpf}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(string cpf, [Bind("Id,Name,Email,Cpf,IsDeleted,SubscriberId")] ClientViewModel client)
+    {
+        if (!ModelState.IsValid) return View(client);
+
+        var clientDb = await _clientService.GetByCpf(cpf, _appUser.GetUserId());
+        clientDb.Name = client.Name;
+        clientDb.Email = client.Email;
+        var response = await _clientService.UpdateClient(clientDb);
+
+        if (HasErrorsInResponse(response.ResponseResult!)) return View(client);
+
+        return RedirectToAction("Index", "Client");
     }
 
     [Route("deletar/{cpf}")]
